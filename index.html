@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two Good Co · Impact Reporter</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #141410;
+    --cream: #f5f0e8;
+    --gold: #c8a050;
+    --gold-light: rgba(200,160,80,0.15);
+    --green: #4a7c59;
+    --green-dark: #3a6449;
+    --muted: #9a8a70;
+    --border: #e8e0d0;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--black);
+    min-height: 100vh;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--black);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar-logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 15px;
+    color: var(--white);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .mock-badge {
+    background: var(--gold-light);
+    border: 1px solid rgba(200,160,80,0.4);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .topbar-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── LAYOUT ── */
+  .shell {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: calc(100vh - 53px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .quarter-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--black);
+    background: var(--cream);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a8a70' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+
+  .donor-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 8px 0;
+  }
+
+  .donor-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .donor-item:hover { background: var(--cream); }
+  .donor-item.active {
+    background: #faf7f2;
+    border-left-color: var(--gold);
+  }
+
+  .donor-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+    color: var(--white);
+  }
+
+  .donor-info { flex: 1; min-width: 0; }
+  .donor-item-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .donor-item-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .donor-item-amount {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--black);
+    white-space: nowrap;
+  }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    background: #faf7f2;
+  }
+  .sidebar-footer-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .sidebar-footer-stats {
+    display: flex;
+    gap: 20px;
+  }
+  .sf-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--black);
+    display: block;
+  }
+  .sf-stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── MAIN PANEL ── */
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+    overflow-y: auto;
+  }
+
+  .main-inner {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .generate-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .generate-label {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .generate-label strong { color: var(--black); font-weight: 500; }
+
+  .gen-btn {
+    background: var(--black);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .gen-btn:hover { background: #2a2a24; transform: translateY(-1px); }
+  .gen-btn:disabled { background: #9a8a70; cursor: not-allowed; transform: none; }
+  .gen-btn .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .gen-btn.loading .spinner { display: block; }
+  .gen-btn.loading .btn-text { opacity: 0.6; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── IMPACT CARD ── */
+  .impact-card {
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .impact-card.fading { opacity: 0; transform: translateY(8px); }
+
+  .card-header {
+    background: var(--black);
+    padding: 26px 30px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-header::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(200,160,80,0.10);
+  }
+  .card-header::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: 80px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(200,160,80,0.06);
+  }
+
+  .ch-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+  }
+  .logo-box {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 12px;
+    line-height: 1.2;
+    color: var(--black);
+  }
+  .quarter-pill {
+    background: var(--gold-light);
+    border: 1px solid rgba(200,160,80,0.4);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  .ch-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+    position: relative;
+    z-index: 1;
+  }
+  .ch-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 4px;
+    font-weight: 300;
+    position: relative;
+    z-index: 1;
+  }
+
+  .narrative-section {
+    padding: 22px 30px 18px;
+    border-bottom: 1px solid var(--border);
+    min-height: 96px;
+    position: relative;
+  }
+  .narrative-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #3a3530;
+  }
+  .narrative-text strong { color: var(--black); font-weight: 500; }
+
+  /* typing animation */
+  .typing-cursor::after {
+    content: '|';
+    animation: blink 0.7s step-end infinite;
+    color: var(--gold);
+    font-weight: 300;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .ai-label {
+    position: absolute;
+    top: 14px; right: 18px;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    font-weight: 600;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .ai-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.7;
+  }
+  .ai-dot.pulse { animation: pulse 1.5s ease infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.4); }
+  }
+
+  .impact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+  .impact-cell {
+    padding: 18px 12px 16px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .impact-cell:last-child { border-right: none; }
+  .impact-icon { font-size: 20px; display: block; margin-bottom: 5px; }
+  .impact-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--black);
+    line-height: 1;
+    display: block;
+  }
+  .impact-unit {
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 4px;
+    display: block;
+    font-weight: 600;
+  }
+
+  .story-section {
+    padding: 18px 30px 16px;
+    background: #faf7f2;
+    border-bottom: 1px solid var(--border);
+  }
+  .story-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .story-quote {
+    font-size: 13px;
+    line-height: 1.65;
+    color: #4a3f30;
+    font-style: italic;
+    border-left: 2px solid var(--gold);
+    padding-left: 14px;
+  }
+
+  .card-bottom {
+    padding: 16px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .donation-info {}
+  .donation-lbl {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .donation-amt {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--black);
+    margin-top: 2px;
+  }
+  .donation-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  .share-btn {
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .share-btn:hover { background: var(--green-dark); }
+
+  .card-footer {
+    background: var(--black);
+    padding: 12px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cf-left { font-size: 11px; color: rgba(255,255,255,0.35); }
+  .cf-right { font-size: 9px; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* ── API KEY INPUT ── */
+  .api-row {
+    margin-bottom: 20px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .api-key-label {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .api-key-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', monospace;
+    font-size: 12px;
+    color: var(--black);
+    background: transparent;
+    min-width: 0;
+  }
+  .api-key-input::placeholder { color: var(--muted); }
+  .api-status {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #d0c8b8;
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  .api-status.ready { background: #4a7c59; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">TWO<br>GOOD CO.</div>
+  <div class="topbar-right">
+    <div class="mock-badge">Mock Demo</div>
+    <div class="topbar-sub">Impact Reporter · Powered by AI</div>
+  </div>
+</div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Donor List — Raisely (Mock)</div>
+      <select class="quarter-select" onchange="updateQuarter(this.value)">
+        <option value="Q1 2025">Q1 2025 (Jan–Mar)</option>
+        <option value="Q2 2025">Q2 2025 (Apr–Jun)</option>
+        <option value="Q4 2024">Q4 2024 (Oct–Dec)</option>
+      </select>
+    </div>
+
+    <div class="donor-list" id="donor-list"></div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label">Quarter Summary</div>
+      <div class="sidebar-footer-stats">
+        <div>
+          <span class="sf-stat-num" id="total-donors">6</span>
+          <span class="sf-stat-label">Donors</span>
+        </div>
+        <div>
+          <span class="sf-stat-num" id="total-raised">$7,940</span>
+          <span class="sf-stat-label">Raised</span>
+        </div>
+        <div>
+          <span class="sf-stat-num" id="total-meals">794</span>
+          <span class="sf-stat-label">Meals</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-inner">
+
+      <!-- API KEY -->
+      <div class="api-row">
+        <span class="api-key-label">Anthropic API Key</span>
+        <input class="api-key-input" type="password" id="api-key" placeholder="sk-ant-..." oninput="checkApiKey()">
+        <div class="api-status" id="api-status"></div>
+      </div>
+
+      <!-- GENERATE ROW -->
+      <div class="generate-row">
+        <div class="generate-label">Viewing: <strong id="viewing-label">Sarah Mitchell</strong></div>
+        <button class="gen-btn" id="gen-btn" onclick="generateNarrative()">
+          <div class="spinner"></div>
+          <span class="btn-text">✦ Generate Impact Report</span>
+        </button>
+      </div>
+
+      <!-- CARD -->
+      <div class="impact-card" id="impact-card">
+        <div class="card-header">
+          <div class="ch-top">
+            <div class="logo-box">TWO<br>GOOD<br>CO.</div>
+            <div class="quarter-pill" id="card-quarter">Q1 2025</div>
+          </div>
+          <div class="ch-name" id="card-name">Sarah Mitchell</div>
+          <div class="ch-sub" id="card-sub">Supporter since March 2023 · NSW · Recurring donor</div>
+        </div>
+
+        <div class="narrative-section">
+          <div class="ai-label">
+            <div class="ai-dot" id="ai-dot"></div>
+            AI Generated
+          </div>
+          <div class="narrative-text" id="narrative-text">
+            Click <strong>Generate Impact Report</strong> above to create a personalised narrative for this donor using AI — in real-world deployment, this runs automatically for every donor after each quarter closes.
+          </div>
+        </div>
+
+        <div class="impact-grid">
+          <div class="impact-cell">
+            <span class="impact-icon">🍱</span>
+            <span class="impact-num" id="stat-meals">–</span>
+            <span class="impact-unit">Meals Funded</span>
+          </div>
+          <div class="impact-cell">
+            <span class="impact-icon">👩‍💼</span>
+            <span class="impact-num" id="stat-women">–</span>
+            <span class="impact-unit">Women Supported</span>
+          </div>
+          <div class="impact-cell">
+            <span class="impact-icon">⏱</span>
+            <span class="impact-num" id="stat-hrs">–</span>
+            <span class="impact-unit">Employment Hrs</span>
+          </div>
+        </div>
+
+        <div class="story-section">
+          <div class="story-label">From the Two Good Co team</div>
+          <div class="story-quote" id="story-quote">
+            "Generating your personalised report..."
+          </div>
+        </div>
+
+        <div class="card-bottom">
+          <div class="donation-info">
+            <div class="donation-lbl" id="card-quarter-label">Q1 2025 Contributions</div>
+            <div class="donation-amt" id="card-amount">$150</div>
+            <div class="donation-meta" id="card-meta">3 donations · last on 28 Mar 2025</div>
+          </div>
+          <button class="share-btn">Share My Impact ↗</button>
+        </div>
+
+        <div class="card-footer">
+          <span class="cf-left">twogoodco.com.au</span>
+          <span class="cf-right">Powered by Raisely + Claude AI</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+// ── MOCK RAISELY DATA ──
+const mockDonors = [
+  {
+    id: 1,
+    name: "Sarah Mitchell",
+    sub: "Supporter since March 2023 · NSW · Recurring donor",
+    amount: 150,
+    donations: 3,
+    lastDate: "28 Mar 2025",
+    type: "individual",
+    color: "#4a7c59",
+    initials: "SM",
+    quote: '"Because of donors like Sarah, we were able to keep our weekly employment pathways program running through February — a month that\'s historically our hardest for funding."'
+  },
+  {
+    id: 2,
+    name: "James Thornton",
+    sub: "Supporter since July 2022 · VIC · Recurring donor",
+    amount: 350,
+    donations: 7,
+    lastDate: "31 Mar 2025",
+    type: "individual",
+    color: "#7a5c8a",
+    initials: "JT",
+    quote: '"James has been giving every month for nearly three years. That kind of trust lets us hire with confidence and plan our training sessions months in advance."'
+  },
+  {
+    id: 3,
+    name: "Atlassian",
+    sub: "Corporate Partner · Sydney HQ · One-time grant",
+    amount: 5200,
+    donations: 1,
+    lastDate: "15 Jan 2025",
+    type: "corporate",
+    color: "#0052cc",
+    initials: "AT",
+    quote: '"The Atlassian partnership this quarter changed what we could plan. We ran our first two-day skills bootcamp, and 12 women completed their certificates."'
+  },
+  {
+    id: 4,
+    name: "Priya Sharma",
+    sub: "Supporter since October 2024 · QLD · New donor",
+    amount: 80,
+    donations: 2,
+    lastDate: "22 Mar 2025",
+    type: "individual",
+    color: "#c05a3a",
+    initials: "PS",
+    quote: '"Priya joined us after hearing about our work on a podcast. New donors like her are how we grow our community of supporters beyond our existing networks."'
+  },
+  {
+    id: 5,
+    name: "Michael Chen",
+    sub: "Supporter since January 2021 · NSW · Long-term donor",
+    amount: 600,
+    donations: 6,
+    lastDate: "30 Mar 2025",
+    type: "individual",
+    color: "#3a6a8a",
+    initials: "MC",
+    quote: '"Michael has been with us since our early days. His consistency is part of why we could take the risk of opening our second kitchen location last year."'
+  },
+  {
+    id: 6,
+    name: "CommonWealth Bank Foundation",
+    sub: "Foundation Partner · National · Annual grant",
+    amount: 1560,
+    donations: 1,
+    lastDate: "1 Feb 2025",
+    type: "corporate",
+    color: "#f5a623",
+    initials: "CB",
+    quote: '"Foundation support like this is transformational. It covers fixed costs that individual donations can\'t easily reach — salaries, kitchen equipment, training materials."'
+  }
+];
+
+let currentDonor = mockDonors[0];
+let currentQuarter = "Q1 2025";
+
+// ── IMPACT FORMULA ──
+function calcImpact(amount) {
+  const meals = Math.round(amount / 10);
+  const women = Math.max(1, Math.floor(meals / 6));
+  const hrs = women * 2;
+  return { meals, women, hrs };
+}
+
+// ── RENDER SIDEBAR ──
+function renderSidebar() {
+  const list = document.getElementById('donor-list');
+  list.innerHTML = mockDonors.map(d => {
+    const impact = calcImpact(d.amount);
+    return `
+      <div class="donor-item ${d.id === currentDonor.id ? 'active' : ''}" onclick="selectDonor(${d.id})">
+        <div class="donor-avatar" style="background:${d.color}">${d.initials}</div>
+        <div class="donor-info">
+          <div class="donor-item-name">${d.name}</div>
+          <div class="donor-item-meta">${d.donations} donation${d.donations > 1 ? 's' : ''} · ${impact.meals} meals</div>
+        </div>
+        <div class="donor-item-amount">$${d.amount.toLocaleString()}</div>
+      </div>
+    `;
+  }).join('');
+
+  // totals
+  const total = mockDonors.reduce((s, d) => s + d.amount, 0);
+  const meals = mockDonors.reduce((s, d) => s + calcImpact(d.amount).meals, 0);
+  document.getElementById('total-donors').textContent = mockDonors.length;
+  document.getElementById('total-raised').textContent = '$' + total.toLocaleString();
+  document.getElementById('total-meals').textContent = meals.toLocaleString();
+}
+
+// ── SELECT DONOR ──
+function selectDonor(id) {
+  currentDonor = mockDonors.find(d => d.id === id);
+  renderSidebar();
+  renderCard(false);
+  document.getElementById('viewing-label').textContent = currentDonor.name;
+}
+
+// ── RENDER CARD (no narrative yet) ──
+function renderCard(withNarrative) {
+  const card = document.getElementById('impact-card');
+  card.classList.add('fading');
+  setTimeout(() => {
+    const impact = calcImpact(currentDonor.amount);
+
+    document.getElementById('card-name').textContent = currentDonor.name;
+    document.getElementById('card-sub').textContent = currentDonor.sub;
+    document.getElementById('card-quarter').textContent = currentQuarter;
+    document.getElementById('card-quarter-label').textContent = currentQuarter + ' Contributions';
+    document.getElementById('card-amount').textContent = '$' + currentDonor.amount.toLocaleString();
+    document.getElementById('card-meta').textContent = `${currentDonor.donations} donation${currentDonor.donations > 1 ? 's' : ''} · last on ${currentDonor.lastDate}`;
+    document.getElementById('stat-meals').textContent = impact.meals;
+    document.getElementById('stat-women').textContent = impact.women;
+    document.getElementById('stat-hrs').textContent = impact.hrs;
+    document.getElementById('story-quote').textContent = currentDonor.quote;
+
+    if (!withNarrative) {
+      document.getElementById('narrative-text').innerHTML = 'Click <strong>Generate Impact Report</strong> above to create a personalised AI narrative for this donor.';
+      document.getElementById('ai-dot').classList.remove('pulse');
+    }
+
+    card.classList.remove('fading');
+  }, 220);
+}
+
+// ── UPDATE QUARTER ──
+function updateQuarter(q) {
+  currentQuarter = q;
+  document.getElementById('card-quarter').textContent = q;
+  document.getElementById('card-quarter-label').textContent = q + ' Contributions';
+}
+
+// ── API KEY CHECK ──
+function checkApiKey() {
+  const key = document.getElementById('api-key').value;
+  const status = document.getElementById('api-status');
+  status.classList.toggle('ready', key.startsWith('sk-ant-') && key.length > 20);
+}
+
+// ── GENERATE NARRATIVE (real Claude API call) ──
+async function generateNarrative() {
+  const apiKey = document.getElementById('api-key').value;
+  if (!apiKey || !apiKey.startsWith('sk-ant-')) {
+    alert('Please enter a valid Anthropic API key (starts with sk-ant-) to generate AI narratives.');
+    return;
+  }
+
+  const btn = document.getElementById('gen-btn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const impact = calcImpact(currentDonor.amount);
+  const isCorperate = currentDonor.type === 'corporate';
+
+  const prompt = `You are an impact storyteller for Two Good Co, an Australian social enterprise that employs and empowers women who've experienced domestic violence through food and employment pathways.
+
+Write a warm, specific, personalised 2-sentence impact narrative for a ${isCorperate ? 'corporate donor' : 'donor'} based on their giving data. Use second person. Avoid generic charity clichés. Make it feel real and specific to Two Good Co's mission.
+
+Donor name: ${currentDonor.name}
+Quarter: ${currentQuarter}
+Total donated: $${currentDonor.amount}
+Number of donations: ${currentDonor.donations}
+Meals funded: ${impact.meals}
+Women supported (estimate): ${impact.women}
+Employment hours contributed: ${impact.hrs}
+Donor type: ${currentDonor.type}
+
+Respond with ONLY the 2-sentence narrative. No preamble, no quotes.`;
+
+  const narrativeEl = document.getElementById('narrative-text');
+  narrativeEl.textContent = '';
+  narrativeEl.classList.add('typing-cursor');
+  document.getElementById('ai-dot').classList.add('pulse');
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-calls': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.content && data.content[0]?.text) {
+      const text = data.content[0].text.trim();
+      // Typewriter effect
+      narrativeEl.textContent = '';
+      let i = 0;
+      const typeInterval = setInterval(() => {
+        narrativeEl.textContent += text[i];
+        i++;
+        if (i >= text.length) {
+          clearInterval(typeInterval);
+          narrativeEl.classList.remove('typing-cursor');
+          document.getElementById('ai-dot').classList.remove('pulse');
+        }
+      }, 18);
+    } else {
+      throw new Error(data.error?.message || 'Unexpected API response');
+    }
+  } catch (err) {
+    narrativeEl.classList.remove('typing-cursor');
+    narrativeEl.innerHTML = `<span style="color:#c05a3a">Error: ${err.message}. Check your API key and try again.</span>`;
+    document.getElementById('ai-dot').classList.remove('pulse');
+  }
+
+  btn.classList.remove('loading');
+  btn.disabled = false;
+}
+
+// ── INIT ──
+renderSidebar();
+renderCard(false);
+</script>
+</body>
+</html>
