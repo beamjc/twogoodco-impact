@@ -521,11 +521,78 @@
   }
   .api-status.ready { background: #4a7c59; }
 
+  /* ── MOBILE DONOR PICKER ── */
+  .mobile-donor-bar {
+    display: none;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0;
+  }
+  .mobile-donor-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 16px;
+    scrollbar-width: none;
+  }
+  .mobile-donor-scroll::-webkit-scrollbar { display: none; }
+
+  .mobile-donor-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 4px 6px;
+    border-radius: 10px;
+    transition: background 0.15s;
+    min-width: 60px;
+  }
+  .mobile-donor-chip.active { background: #faf7f2; }
+  .mobile-donor-chip .chip-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; color: var(--white);
+    border: 2px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .mobile-donor-chip.active .chip-avatar { border-color: var(--gold); }
+  .mobile-donor-chip .chip-name {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--black);
+    text-align: center;
+    white-space: nowrap;
+    max-width: 64px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mobile-donor-chip .chip-amount {
+    font-size: 9px;
+    color: var(--muted);
+  }
+
+  .mobile-quarter-row {
+    display: none;
+    padding: 8px 16px 0;
+    background: var(--white);
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 700px) {
     .shell { grid-template-columns: 1fr; }
     .sidebar { display: none; }
-    .main { padding: 20px 16px; }
+    .mobile-donor-bar { display: block; }
+    .mobile-quarter-row { display: block; }
+    .main { padding: 16px 12px; }
+    .main-inner { max-width: 100%; }
+    .generate-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .gen-btn { width: 100%; justify-content: center; }
+    .api-row { flex-wrap: wrap; }
+    .card-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .share-btn { width: 100%; text-align: center; }
   }
 </style>
 </head>
@@ -539,6 +606,18 @@
   </div>
 </div>
 
+<!-- MOBILE QUARTER SELECT -->
+<div class="mobile-quarter-row">
+  <select class="quarter-select" onchange="updateQuarter(this.value)" style="margin-bottom:8px;">
+    <option value="Q1 2025">Q1 2025 (Jan–Mar)</option>
+    <option value="Q2 2025">Q2 2025 (Apr–Jun)</option>
+    <option value="Q4 2024">Q4 2024 (Oct–Dec)</option>
+  </select>
+</div>
+<!-- MOBILE DONOR PICKER -->
+<div class="mobile-donor-bar">
+  <div class="mobile-donor-scroll" id="mobile-donor-scroll"></div>
+</div>
 <div class="shell">
 
   <!-- SIDEBAR -->
@@ -771,10 +850,28 @@ function renderSidebar() {
   document.getElementById('total-meals').textContent = meals.toLocaleString();
 }
 
+// ── RENDER MOBILE PICKER ──
+function renderMobilePicker() {
+  const scroll = document.getElementById('mobile-donor-scroll');
+  if (!scroll) return;
+  scroll.innerHTML = mockDonors.map(d => `
+    <div class="mobile-donor-chip ${d.id === currentDonor.id ? 'active' : ''}" onclick="selectDonor(${d.id})">
+      <div class="chip-avatar" style="background:${d.color}">${d.initials}</div>
+      <div class="chip-name">${d.name.split(' ')[0]}</div>
+      <div class="chip-amount">$${d.amount.toLocaleString()}</div>
+    </div>
+  `).join('');
+  setTimeout(() => {
+    const active = scroll.querySelector('.mobile-donor-chip.active');
+    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, 50);
+}
+
 // ── SELECT DONOR ──
 function selectDonor(id) {
   currentDonor = mockDonors.find(d => d.id === id);
   renderSidebar();
+  renderMobilePicker();
   renderCard(false);
   document.getElementById('viewing-label').textContent = currentDonor.name;
 }
@@ -902,6 +999,7 @@ Respond with ONLY the 2-sentence narrative. No preamble, no quotes.`;
 
 // ── INIT ──
 renderSidebar();
+renderMobilePicker();
 renderCard(false);
 </script>
 </body>
